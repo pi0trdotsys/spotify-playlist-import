@@ -1,5 +1,110 @@
 # spotify-playlist-import
 
+Useful when changing your Spotify account — automatically transfers your liked songs.
+
+> 🇵🇱 [Polska wersja poniżej](#polska-wersja)
+
+---
+
+## How it works
+
+1. Export liked songs from your old account to CSV
+2. Run the script on your new account
+3. The script adds all tracks to your liked songs
+
+---
+
+## Step 1 — Export with Exportify
+
+Go to https://exportify.net/, log in with your old account and download **Liked Songs** as CSV.  
+Save the file as `Liked_Songs.csv` in the project directory.
+
+---
+
+## Step 2 — Create a Spotify Developer App
+
+1. Go to https://developer.spotify.com/dashboard/create
+2. Fill in the form (name and description can be anything)
+3. In the **Redirect URIs** field enter exactly: `http://127.0.0.1:8888/callback`
+4. Under **APIs used** check only: **Web API** ✅  
+   (Web Playback SDK, Android, iOS, Ads API — **not needed**)
+5. Save and go to app settings — copy your **Client ID** and **Client Secret**
+
+---
+
+## Step 3 — Configure `.env`
+
+Copy the example file and fill in your credentials:
+
+```bash
+cp env.example .env
+```
+
+Edit `.env`:
+
+```env
+SPOTIFY_CLIENT_ID=your_client_id_here
+SPOTIFY_CLIENT_SECRET=your_client_secret_here
+SPOTIFY_REDIRECT_URI=http://127.0.0.1:8888/callback
+CSV_FILE=Liked_Songs.csv
+```
+
+---
+
+## Step 4 — Install dependencies
+
+```bash
+pip install spotipy pandas python-dotenv
+```
+
+---
+
+## Step 5 — Run
+
+```bash
+python3 spotify_import_with_credentials.py
+```
+
+On first run a browser window will open asking you to authorize.  
+After logging in you'll be redirected to `http://127.0.0.1:8888/callback` — that's expected.
+
+---
+
+## Troubleshooting
+
+### `SpotifyOauthError: invalid_client`
+
+Spotipy caches the token in a `.cache` file. If the token expired or the app credentials changed, the refresh fails.
+
+**Fix:** delete the cache and re-run:
+
+```bash
+rm -f .cache && python3 spotify_import_with_credentials.py
+```
+
+You'll be prompted to log in again via the browser.
+
+### Browser doesn't open
+
+Copy the URL printed in the terminal and paste it manually into your browser.
+
+---
+
+## .gitignore
+
+Make sure `.env` and `.cache` are in `.gitignore` — don't push credentials to GitHub:
+
+```
+.env
+.cache
+```
+
+---
+
+---
+
+# Polska wersja
+
 Przydatne przy zmianie konta Spotify — automatycznie przenosi polubione utwory.
 
 ## Jak to działa
@@ -10,7 +115,7 @@ Przydatne przy zmianie konta Spotify — automatycznie przenosi polubione utwory
 
 ---
 
-## Krok 1 — Eksport z exportify
+## Krok 1 — Eksport z Exportify
 
 Wejdź na https://exportify.net/, zaloguj się starym kontem i pobierz **Liked Songs** jako CSV.  
 Zapisz plik jako `Liked_Songs.csv` w katalogu projektu.
@@ -33,7 +138,7 @@ Zapisz plik jako `Liked_Songs.csv` w katalogu projektu.
 Skopiuj plik przykładowy i uzupełnij swoje dane:
 
 ```bash
-cp .env.example .env
+cp env.example .env
 ```
 
 Edytuj `.env`:
